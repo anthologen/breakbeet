@@ -1,0 +1,30 @@
+{
+  "name": "musical-beets",
+  "version": "0.0.1",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "regenerator-runtime": "^0.13.7",
+    "three": "^0.124.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "parcel index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anthologen/musical-beets.git"
+  },
+  "keywords": [
+    "3d",
+    "music",
+    "visualization",
+    "beet"
+  ],
+  "author": "anthologen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/anthologen/musical-beets/issues"
+  },
+  "homepage": "https://github.com/anthologen/musical-beets#readme"
+}
