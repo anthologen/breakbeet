@@ -22,6 +22,15 @@ function loadModel(url) {
 }
 
 function main() {
+  var audioElement = document.getElementById("audioElement");
+  var audioContext = new AudioContext();
+  var audioSrc = audioContext.createMediaElementSource(audioElement);
+  var audioAnalyzer = audioContext.createAnalyser();
+  audioSrc.connect(audioAnalyzer);
+  audioAnalyzer.connect(audioContext.destination);
+  audioAnalyzer.fftSize = 256;
+  var dataArray = new Uint8Array(audioAnalyzer.frequencyBinCount);
+
   var model;
   async function load() {
     const modelUrl = require('./assets/models/beetroot.glb');
@@ -34,10 +43,37 @@ function main() {
 
   var y_rot_rps = 0.05; // revolutions per second
   var y_rot_delta = y_rot_rps * Math.PI / 30; // assuming 60 FPS
+
+  var pivotPercentSlider = 0.2; // where to partition the frequency spectrum
+  var dampeningFactor = 0.002; // shrink model to fit on canvas
+
+  var pivotIdx = (dataArray.length/2 - 1) * pivotPercentSlider;
+
+  function avg(arr) {
+    return arr.reduce((a, b) => a + b) / arr.length;
+  }
+
+  function fftArrToScaleVec(fftArr) {
+    var lowerSubArray = fftArr.slice(0, pivotIdx);
+    var upperSubArray = fftArr.slice(pivotIdx, fftArr.length - 1);
+    var lowFreqFactor = avg(lowerSubArray) * dampeningFactor;
+    var highFreqFactor = avg(upperSubArray) * dampeningFactor;
+    return new THREE.Vector3(
+      1 + lowFreqFactor, // X
+      1 + lowFreqFactor, // Y
+      1 + highFreqFactor // Z
+    );
+  }
+
   function animate() {
-    requestAnimationFrame( animate );
+    audioAnalyzer.getByteFrequencyData(dataArray);
+
+    var scaleVec = fftArrToScaleVec(dataArray);
+    model.scale.copy(scaleVec);
+
     model.rotation.y += y_rot_delta;
-    renderer.render( scene, camera );
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
   }
 
   load().then(animate).catch(error => {
