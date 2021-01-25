@@ -8,7 +8,7 @@ camera.position.z = 5;
 
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
-document.body.appendChild( renderer.domElement );
+document.getElementById("viewport").appendChild( renderer.domElement );
 
 const ambientLight = new THREE.AmbientLight(0x404040, 8);
 scene.add(ambientLight);

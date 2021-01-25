@@ -3,20 +3,25 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Musical Beet</title>
-		<style>
-			audio {
-				position: fixed;
-				left: 10px;
-				bottom: -10px;
-				width: calc(100% - 20px);
-				}
-		</style>
+		<link rel="stylesheet" href="index.css">
 	</head>
 	<body>
-		<script type="module" src="node_modules/three/build/three.js"></script>
-		<audio id="audioElement" controls loop>
-				<source src="assets/audio/amen_break_rendition.mp3" type="audio/mpeg">
-		</audio>
+		<script type="module" src="node_modules/three/build/three.min.js"></script>
+		<script type="module" src="node_modules/slideout/dist/slideout.min.js"></script>
+		<nav id="menu">
+			<header>
+				<h2>Options</h2>
+			</header>
+		</nav>
+		<main id="panel">
+			<button class="toggle-button">☰</button>
+			<div id="viewport"></div>
+			<audio id="audioElement" controls loop>
+					<source src="assets/audio/amen_break_rendition.mp3" type="audio/mpeg">
+					Your browser does not support the audio element.
+			</audio>
+		</main>
+		<script src="optionsSlideout.js"></script>
 		<script src="app.js"></script>
 	</body>
 </html>

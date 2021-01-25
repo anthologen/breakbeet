@@ -5,6 +5,7 @@
   "main": "app.js",
   "dependencies": {
     "regenerator-runtime": "^0.13.7",
+    "slideout": "^1.0.1",
     "three": "^0.124.0"
   },
   "devDependencies": {},
