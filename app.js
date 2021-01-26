@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 var scene = new THREE.Scene();
+scene.background = new THREE.Color(document.getElementById("backgroundColor").value);
 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 camera.position.z = 5;
 
@@ -17,6 +18,11 @@ window.addEventListener('resize', () => {
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
 })
+
+document.getElementById("backgroundColor").addEventListener('input', (event) => {
+  scene.background = new THREE.Color(event.target.value);
+})
+
 
 const ambientLight = new THREE.AmbientLight(0x404040, 8);
 scene.add(ambientLight);
