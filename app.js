@@ -10,6 +10,14 @@ var renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.getElementById("viewport").appendChild( renderer.domElement );
 
+window.addEventListener('resize', () => {
+  let width = window.innerWidth;
+  let height = window.innerHeight;
+  renderer.setSize(width, height);
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+})
+
 const ambientLight = new THREE.AmbientLight(0x404040, 8);
 scene.add(ambientLight);
 
