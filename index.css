@@ -56,3 +56,12 @@ audio {
   bottom: 10px;
   width: calc(100% - 20px);
 }
+
+.show {
+  opacity: 1;
+}
+
+.hide {
+  opacity: 0;
+  transition: opacity 400ms;
+}

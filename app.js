@@ -19,6 +19,16 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
 })
 
+document.getElementById("panel").addEventListener('mouseover', (event) => {
+  document.getElementById("controls-container").classList.remove('hide');
+  document.getElementById("controls-container").classList.add('show');
+})
+
+document.getElementById("panel").addEventListener('mouseout', (event) => {
+  document.getElementById("controls-container").classList.remove('show');
+  document.getElementById("controls-container").classList.add('hide');
+})
+
 document.getElementById("backgroundColor").addEventListener('input', (event) => {
   scene.background = new THREE.Color(event.target.value);
 })
