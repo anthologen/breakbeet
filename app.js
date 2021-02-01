@@ -33,6 +33,11 @@ document.getElementById("backgroundColor").addEventListener('input', (event) => 
   scene.background = new THREE.Color(event.target.value);
 })
 
+document.getElementById("audioInputFile").onchange = (event) => {
+  const uploadedFile = event.target.files[0];
+  const fileUrl = URL.createObjectURL(uploadedFile);
+  document.getElementById("audioElement").src = fileUrl;
+}
 
 const ambientLight = new THREE.AmbientLight(0x404040, 8);
 scene.add(ambientLight);
