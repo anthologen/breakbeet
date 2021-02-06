@@ -1,6 +1,7 @@
 import 'regenerator-runtime/runtime';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 var scene = new THREE.Scene();
 scene.background = new THREE.Color(document.getElementById("backgroundColor").value);
@@ -10,6 +11,8 @@ camera.position.z = 5;
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.getElementById("viewport").appendChild( renderer.domElement );
+
+const controls = new OrbitControls( camera, renderer.domElement );
 
 window.addEventListener('resize', () => {
   let width = window.innerWidth;
@@ -118,7 +121,7 @@ function main(inputModelUrl) {
     var scaleVec = fftArrToScaleVec(dataArray);
     model.scale.copy(scaleVec);
     const rot_delta = (2 * Math.PI) / (60 * 60); // 60 FPS * 60 sec
-    
+
     model.rotation.x += x_rot_rpm * rot_delta;
     model.rotation.y += y_rot_rpm * rot_delta;
     model.rotation.z += z_rot_rpm * rot_delta;
