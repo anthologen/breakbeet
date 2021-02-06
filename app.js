@@ -14,6 +14,9 @@ document.getElementById("viewport").appendChild( renderer.domElement );
 
 const controls = new OrbitControls( camera, renderer.domElement );
 
+const ambientLight = new THREE.AmbientLight(0x404040, 8);
+scene.add(ambientLight);
+
 window.addEventListener('resize', () => {
   let width = window.innerWidth;
   let height = window.innerHeight;
@@ -62,8 +65,13 @@ document.getElementById("modelInputZRot").addEventListener('input', (event) => {
   z_rot_rpm = event.target.valueAsNumber || 0;
 })
 
-const ambientLight = new THREE.AmbientLight(0x404040, 8);
-scene.add(ambientLight);
+document.getElementById("lightColor").addEventListener('input', (event) => {
+  ambientLight.color = new THREE.Color(event.target.value);
+})
+
+document.getElementById("lightIntensity").addEventListener('input', (event) => {
+  ambientLight.intensity = event.target.valueAsNumber || 0;
+})
 
 var audioElement = document.getElementById("audioElement");
 var audioContext = new AudioContext();
