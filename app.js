@@ -42,31 +42,32 @@ document.getElementById("audioInputFile").onchange = (event) => {
 const ambientLight = new THREE.AmbientLight(0x404040, 8);
 scene.add(ambientLight);
 
-const loader = new GLTFLoader();
+var audioElement = document.getElementById("audioElement");
+var audioContext = new AudioContext();
+var audioSrc = audioContext.createMediaElementSource(audioElement);
+var audioAnalyzer = audioContext.createAnalyser();
+audioSrc.connect(audioAnalyzer);
+audioAnalyzer.connect(audioContext.destination);
+audioAnalyzer.fftSize = 256;
+var dataArray = new Uint8Array(audioAnalyzer.frequencyBinCount);
 
+const loader = new GLTFLoader();
 function loadModel(url) {
   return new Promise((resolve, reject) => {
     loader.load(url, data => resolve(data), null, reject)
   });
 }
 
-function main() {
-  var audioElement = document.getElementById("audioElement");
-  var audioContext = new AudioContext();
-  var audioSrc = audioContext.createMediaElementSource(audioElement);
-  var audioAnalyzer = audioContext.createAnalyser();
-  audioSrc.connect(audioAnalyzer);
-  audioAnalyzer.connect(audioContext.destination);
-  audioAnalyzer.fftSize = 256;
-  var dataArray = new Uint8Array(audioAnalyzer.frequencyBinCount);
-
+function main(inputModelUrl) {
   var model;
-  async function load() {
-    const modelUrl = require('./assets/models/beetroot.glb');
+  async function load(modelUrl) {
+    // clear existing model
+    var objToRemove = scene.getObjectByName("targetModel");
+    scene.remove(objToRemove);
+    // load model
     const gltfData = await loadModel(modelUrl);
-
     model = gltfData.scene;
-
+    model.name = "targetModel";
     scene.add(model);
   }
 
@@ -105,10 +106,15 @@ function main() {
     requestAnimationFrame(animate);
   }
 
-  load().then(animate).catch(error => {
+  load(inputModelUrl).then(animate).catch(error => {
     console.log(error);
   });
-
 }
 
-main();
+document.getElementById("modelInputFile").onchange = (event) => {
+  const uploadedFile = event.target.files[0];
+  const fileUrl = URL.createObjectURL(uploadedFile);
+  main(fileUrl);
+}
+
+main(require('./assets/models/beetroot.glb'));
