@@ -41,7 +41,22 @@ document.getElementById("audioInputFile").onchange = (event) => {
 
 var modelBaseSize = 1;
 document.getElementById("modelInputBaseSize").addEventListener('input', (event) => {
-  modelBaseSize = event.target.valueAsNumber;
+  modelBaseSize = event.target.valueAsNumber || 0;
+})
+
+var x_rot_rpm = 0;
+document.getElementById("modelInputXRot").addEventListener('input', (event) => {
+  x_rot_rpm = event.target.valueAsNumber || 0;
+})
+
+var y_rot_rpm = 1;
+document.getElementById("modelInputYRot").addEventListener('input', (event) => {
+  y_rot_rpm = event.target.valueAsNumber || 0;
+})
+
+var z_rot_rpm = 0;
+document.getElementById("modelInputZRot").addEventListener('input', (event) => {
+  z_rot_rpm = event.target.valueAsNumber || 0;
 })
 
 const ambientLight = new THREE.AmbientLight(0x404040, 8);
@@ -76,10 +91,7 @@ function main(inputModelUrl) {
     scene.add(model);
   }
 
-  var y_rot_rps = 0.05; // revolutions per second
-  var y_rot_delta = y_rot_rps * Math.PI / 30; // assuming 60 FPS
-
-  var pivotPercentSlider = 0.2; // where to partition the frequency spectrum
+  var pivotPercentSlider = 0.1; // where to partition the frequency spectrum
   var dampeningFactor = 0.002; // shrink model to fit on canvas
 
   var pivotIdx = (dataArray.length/2 - 1) * pivotPercentSlider;
@@ -94,9 +106,9 @@ function main(inputModelUrl) {
     var lowFreqFactor = avg(lowerSubArray) * dampeningFactor;
     var highFreqFactor = avg(upperSubArray) * dampeningFactor;
     return new THREE.Vector3(
-      modelBaseSize + lowFreqFactor, // X
-      modelBaseSize + lowFreqFactor, // Y
-      modelBaseSize + highFreqFactor // Z
+      modelBaseSize + lowFreqFactor,
+      modelBaseSize + highFreqFactor,
+      modelBaseSize + lowFreqFactor
     );
   }
 
@@ -105,8 +117,12 @@ function main(inputModelUrl) {
 
     var scaleVec = fftArrToScaleVec(dataArray);
     model.scale.copy(scaleVec);
+    const rot_delta = (2 * Math.PI) / (60 * 60); // 60 FPS * 60 sec
+    
+    model.rotation.x += x_rot_rpm * rot_delta;
+    model.rotation.y += y_rot_rpm * rot_delta;
+    model.rotation.z += z_rot_rpm * rot_delta;
 
-    model.rotation.y += y_rot_delta;
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
   }
