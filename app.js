@@ -39,6 +39,11 @@ document.getElementById("audioInputFile").onchange = (event) => {
   document.getElementById("audioElement").src = fileUrl;
 }
 
+var modelBaseSize = 1;
+document.getElementById("modelInputBaseSize").addEventListener('input', (event) => {
+  modelBaseSize = event.target.valueAsNumber;
+})
+
 const ambientLight = new THREE.AmbientLight(0x404040, 8);
 scene.add(ambientLight);
 
@@ -89,9 +94,9 @@ function main(inputModelUrl) {
     var lowFreqFactor = avg(lowerSubArray) * dampeningFactor;
     var highFreqFactor = avg(upperSubArray) * dampeningFactor;
     return new THREE.Vector3(
-      1 + lowFreqFactor, // X
-      1 + lowFreqFactor, // Y
-      1 + highFreqFactor // Z
+      modelBaseSize + lowFreqFactor, // X
+      modelBaseSize + lowFreqFactor, // Y
+      modelBaseSize + highFreqFactor // Z
     );
   }
 
