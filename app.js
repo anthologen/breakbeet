@@ -48,11 +48,6 @@ document.getElementById("audioInputFile").onchange = (event) => {
   document.getElementById("audioElement").src = fileUrl;
 }
 
-var modelBaseSize = 1;
-document.getElementById("modelInputBaseSize").addEventListener('input', (event) => {
-  modelBaseSize = event.target.valueAsNumber || 0;
-})
-
 var x_rot_rpm = 0;
 document.getElementById("modelInputXRot").addEventListener('input', (event) => {
   x_rot_rpm = event.target.valueAsNumber || 0;
@@ -159,9 +154,9 @@ function fftArrToScaleVec(fftArr) {
   let hFreqFactor = avg(hSubArray) * dampeningFactor;
   let vFreqFactor = avg(vSubArray) * dampeningFactor;
   return new THREE.Vector3(
-    modelBaseSize + hFreqFactor,
-    modelBaseSize + vFreqFactor,
-    modelBaseSize + hFreqFactor
+    1 + hFreqFactor,
+    1 + vFreqFactor,
+    1 + hFreqFactor
   );
 }
 
