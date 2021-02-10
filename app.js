@@ -2,6 +2,9 @@ import 'regenerator-runtime/runtime';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import noUiSlider from 'nouislider';
+import 'nouislider/distribute/nouislider.css';
+import wNumb from 'wnumb';
 
 var scene = new THREE.Scene();
 scene.background = new THREE.Color(document.getElementById("backgroundColor").value);
@@ -79,8 +82,88 @@ var audioSrc = audioContext.createMediaElementSource(audioElement);
 var audioAnalyzer = audioContext.createAnalyser();
 audioSrc.connect(audioAnalyzer);
 audioAnalyzer.connect(audioContext.destination);
-audioAnalyzer.fftSize = 256;
+audioAnalyzer.fftSize = 2048;
 var dataArray = new Uint8Array(audioAnalyzer.frequencyBinCount);
+const {createAudioBars, updateAudioBars} = require('audio-frequency-tempered');
+var temperedAudioDataArray = createAudioBars({ groupLevel: 2 });
+const numFreqBins  = temperedAudioDataArray.length;
+
+const minFrequency = 20;
+const maxFrequency = 22000;
+const midStartFrequency = 440;
+const tooltipConfig = wNumb({suffix: " Hz", thousand: ',', decimals: 0});
+const tooltipConfigList = [tooltipConfig, tooltipConfig]; // both handles
+
+function makeHundredLogRangeDict() {
+  // Solve A and k in y = A*e^(kx) with points (0, 20) and (100, 22000)
+  const centLogA = minFrequency;
+  const centLogK = Math.log(maxFrequency/minFrequency) / 100;
+  var logRangeDict = {};
+  for (let i = 0; i <= 100; i++)
+  {
+    logRangeDict[i + '%'] = centLogA * Math.exp(centLogK * i);
+  }
+  logRangeDict["min"] = minFrequency;
+  delete logRangeDict['0%'];
+  logRangeDict["max"] = maxFrequency;
+  delete logRangeDict['100%'];
+  return logRangeDict;
+}
+const logRangeConfig = makeHundredLogRangeDict();
+
+// Solve A and k in y = A*e^(kx) with points (0, 20) and (numFreqBins-1, 22000)
+const binLogA = minFrequency;
+const binLogK =  Math.log(maxFrequency/minFrequency) / (numFreqBins - 1);
+function freqToBinIdx(inFreq) {
+  return Math.round(Math.log(inFreq / binLogA) / binLogK);
+}
+
+var hLowerBound = freqToBinIdx(minFrequency);
+var hUpperBound = freqToBinIdx(midStartFrequency);
+var hFreqSlider = document.getElementById('hFreqSlider');
+noUiSlider.create(hFreqSlider, {
+    start: [minFrequency, midStartFrequency],
+    connect: true,
+    tooltips: tooltipConfigList,
+    range: logRangeConfig
+});
+hFreqSlider.noUiSlider.on("update", (sliderVals) => {
+  hLowerBound = freqToBinIdx(sliderVals[0]);
+  hUpperBound = freqToBinIdx(sliderVals[1]);
+});
+
+var vLowerBound = freqToBinIdx(midStartFrequency);
+var vUpperBound = freqToBinIdx(maxFrequency);
+var vFreqSlider = document.getElementById('vFreqSlider');
+noUiSlider.create(vFreqSlider, {
+    start: [midStartFrequency, maxFrequency],
+    connect: true,
+    tooltips: tooltipConfigList,
+    range: logRangeConfig
+});
+vFreqSlider.noUiSlider.on("update", (sliderVals) => {
+  vLowerBound = freqToBinIdx(sliderVals[0]);
+  vUpperBound = freqToBinIdx(sliderVals[1]);
+});
+
+var dampeningFactor = 1;//0.002; // shrink model to fit on canvas
+
+function avg(arr) {
+  if (arr.length === 0) return 0;
+  return arr.reduce((a, b) => a + b) / arr.length;
+}
+
+function fftArrToScaleVec(fftArr) {
+  let hSubArray = fftArr.slice(hLowerBound, hUpperBound);
+  let vSubArray = fftArr.slice(vLowerBound, vUpperBound);
+  let hFreqFactor = avg(hSubArray) * dampeningFactor;
+  let vFreqFactor = avg(vSubArray) * dampeningFactor;
+  return new THREE.Vector3(
+    modelBaseSize + hFreqFactor,
+    modelBaseSize + vFreqFactor,
+    modelBaseSize + hFreqFactor
+  );
+}
 
 const loader = new GLTFLoader();
 function loadModel(url) {
@@ -88,6 +171,7 @@ function loadModel(url) {
     loader.load(url, data => resolve(data), null, reject)
   });
 }
+
 
 function main(inputModelUrl) {
   var model;
@@ -102,31 +186,12 @@ function main(inputModelUrl) {
     scene.add(model);
   }
 
-  var pivotPercentSlider = 0.1; // where to partition the frequency spectrum
-  var dampeningFactor = 0.002; // shrink model to fit on canvas
-
-  var pivotIdx = (dataArray.length/2 - 1) * pivotPercentSlider;
-
-  function avg(arr) {
-    return arr.reduce((a, b) => a + b) / arr.length;
-  }
-
-  function fftArrToScaleVec(fftArr) {
-    var lowerSubArray = fftArr.slice(0, pivotIdx);
-    var upperSubArray = fftArr.slice(pivotIdx, fftArr.length - 1);
-    var lowFreqFactor = avg(lowerSubArray) * dampeningFactor;
-    var highFreqFactor = avg(upperSubArray) * dampeningFactor;
-    return new THREE.Vector3(
-      modelBaseSize + lowFreqFactor,
-      modelBaseSize + highFreqFactor,
-      modelBaseSize + lowFreqFactor
-    );
-  }
-
   function animate() {
     audioAnalyzer.getByteFrequencyData(dataArray);
+    updateAudioBars(dataArray);
+    var fftData = temperedAudioDataArray.map((x) => x['value']);
 
-    var scaleVec = fftArrToScaleVec(dataArray);
+    var scaleVec = fftArrToScaleVec(fftData);
     model.scale.copy(scaleVec);
     const rot_delta = (2 * Math.PI) / (60 * 60); // 60 FPS * 60 sec
 

@@ -4,9 +4,12 @@
   "description": "",
   "main": "app.js",
   "dependencies": {
+    "audio-frequency-tempered": "^1.0.1",
+    "nouislider": "^14.6.3",
     "regenerator-runtime": "^0.13.7",
     "slideout": "^1.0.1",
-    "three": "^0.124.0"
+    "three": "^0.124.0",
+    "wnumb": "^1.2.0"
   },
   "devDependencies": {},
   "scripts": {
