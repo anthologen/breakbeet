@@ -76,7 +76,7 @@ function AudioProcessor() {
 }
 var audioProcessor = AudioProcessor();
 
-function ModelAudioScaler() {
+function FreqRangeSelector() {
   const MIN_FREQUENCY = 20;
   const MAX_FREQUENCY = 22000;
   const MID_START_FREQUENCY = 440;
@@ -136,16 +136,39 @@ function ModelAudioScaler() {
     vUpperBinIdx = freqToBinIdx(sliderVals[1]);
   });
 
+  return Object.freeze({
+    getHLoBinIdx: () => hLowerBinIdx,
+    getHHiBinIdx: () => hUpperBinIdx,
+    getVLoBinIdx: () => vLowerBinIdx,
+    getVHiBinIdx: () => vUpperBinIdx,
+  });
+
+}
+var freqRanges = FreqRangeSelector();
+
+function ModelAudioScaler() {
+  var hScaleFactor = 1;
+  document.getElementById("modelHScaleFactor").addEventListener('input', (event) => {
+    hScaleFactor = event.target.valueAsNumber || 0;
+  })
+
+  var vScaleFactor = 0;
+  document.getElementById("modelVScaleFactor").addEventListener('input', (event) => {
+    vScaleFactor = event.target.valueAsNumber || 0;
+  })
+
   function avg(arr) {
     if (arr.length === 0) return 0;
     return arr.reduce((a, b) => a + b) / arr.length;
   }
 
   function fftArrToScaleVec(fftArr) {
-    let hSubArray = fftArr.slice(hLowerBinIdx, hUpperBinIdx);
-    let vSubArray = fftArr.slice(vLowerBinIdx, vUpperBinIdx);
-    let hFreqFactor = avg(hSubArray);
-    let vFreqFactor = avg(vSubArray);
+    let hSubArray = fftArr.slice(freqRanges.getHLoBinIdx(),
+                                 freqRanges.getHHiBinIdx());
+    let vSubArray = fftArr.slice(freqRanges.getVLoBinIdx(),
+                                 freqRanges.getVHiBinIdx());
+    let hFreqFactor = avg(hSubArray) * hScaleFactor;
+    let vFreqFactor = avg(vSubArray) * vScaleFactor;
     return new THREE.Vector3(1 + hFreqFactor, 1 + vFreqFactor, 1 + hFreqFactor);
   }
 
