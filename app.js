@@ -178,6 +178,27 @@ function ModelAudioScaler() {
 }
 var modelAudioScaler = ModelAudioScaler();
 
+function AudioSpectrum() {
+  let canvas = document.getElementById("audioSpectrumCanvas");
+  let canvasCtx = canvas.getContext('2d');
+  canvasCtx.fillStyle = 'rgb(0, 0, 0)';
+
+  function drawSpectrum(fftArr) {
+    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+    let barWidth = canvas.width / fftArr.length;
+    for(let i = 0; i < fftArr.length; i++) {
+      let barHeight = fftArr[i] * canvas.height;
+      canvasCtx.fillRect(i * barWidth, canvas.height - barHeight,
+                         barWidth, barHeight);
+    }
+  }
+
+  return Object.freeze({
+    drawSpectrum
+  });
+}
+var audioSpectrum = AudioSpectrum();
+
 var x_rot_rpm = 0;
 document.getElementById("modelInputXRot").addEventListener('input', (event) => {
   x_rot_rpm = event.target.valueAsNumber || 0;
@@ -215,6 +236,8 @@ function main(inputModelUrl) {
 
   function animate() {
     let logFftArray = audioProcessor.getLogFftArray();
+    audioSpectrum.drawSpectrum(logFftArray);
+
     let scaleVec = modelAudioScaler.fftArrToScaleVec(logFftArray);
     model.scale.copy(scaleVec);
 
