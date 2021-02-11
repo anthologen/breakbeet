@@ -110,7 +110,7 @@ function FreqRangeSelector() {
 
   let hLowerBinIdx = freqToBinIdx(MIN_FREQUENCY);
   let hUpperBinIdx = freqToBinIdx(MID_START_FREQUENCY);
-  let hFreqSlider = document.getElementById('hFreqSlider');
+  let hFreqSlider = document.getElementById('sliderHFreqs');
   noUiSlider.create(hFreqSlider, {
       start: [MIN_FREQUENCY, MID_START_FREQUENCY],
       connect: true,
@@ -121,10 +121,12 @@ function FreqRangeSelector() {
     hLowerBinIdx = freqToBinIdx(sliderVals[0]);
     hUpperBinIdx = freqToBinIdx(sliderVals[1]);
   });
+  var hConnects = hFreqSlider.querySelectorAll('.noUi-connect');
+  hConnects[0].classList.add("hSliderConnect");
 
   let vLowerBinIdx = freqToBinIdx(MID_START_FREQUENCY);
   let vUpperBinIdx = freqToBinIdx(MAX_FREQUENCY);
-  let vFreqSlider = document.getElementById('vFreqSlider');
+  let vFreqSlider = document.getElementById('sliderVFreqs');
   noUiSlider.create(vFreqSlider, {
       start: [MID_START_FREQUENCY, MAX_FREQUENCY],
       connect: true,
@@ -135,6 +137,8 @@ function FreqRangeSelector() {
     vLowerBinIdx = freqToBinIdx(sliderVals[0]);
     vUpperBinIdx = freqToBinIdx(sliderVals[1]);
   });
+  var vConnects = vFreqSlider.querySelectorAll('.noUi-connect');
+  vConnects[0].classList.add("vSliderConnect");
 
   return Object.freeze({
     getHLoBinIdx: () => hLowerBinIdx,
@@ -152,7 +156,7 @@ function ModelAudioScaler() {
     hScaleFactor = event.target.valueAsNumber || 0;
   })
 
-  var vScaleFactor = 0;
+  var vScaleFactor = 1;
   document.getElementById("modelVScaleFactor").addEventListener('input', (event) => {
     vScaleFactor = event.target.valueAsNumber || 0;
   })
@@ -181,13 +185,25 @@ var modelAudioScaler = ModelAudioScaler();
 function AudioSpectrum() {
   let canvas = document.getElementById("audioSpectrumCanvas");
   let canvasCtx = canvas.getContext('2d');
-  canvasCtx.fillStyle = 'rgb(0, 0, 0)';
 
   function drawSpectrum(fftArr) {
     canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
     let barWidth = canvas.width / fftArr.length;
+    let hLo = freqRanges.getHLoBinIdx();
+    let hHi = freqRanges.getHHiBinIdx();
+    let vLo = freqRanges.getVLoBinIdx();
+    let vHi = freqRanges.getVHiBinIdx();
     for(let i = 0; i < fftArr.length; i++) {
       let barHeight = fftArr[i] * canvas.height;
+      let r = 0, g = 0, b = 0;
+      if (hLo <= i && i < hHi) { // h is red
+        r += 192;
+      }
+      if (vLo <= i && i < vHi) { // v is blue
+        g += 63;
+        b += 255;
+      }
+      canvasCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
       canvasCtx.fillRect(i * barWidth, canvas.height - barHeight,
                          barWidth, barHeight);
     }
@@ -204,7 +220,7 @@ document.getElementById("modelInputXRot").addEventListener('input', (event) => {
   x_rot_rpm = event.target.valueAsNumber || 0;
 })
 
-var y_rot_rpm = 1;
+var y_rot_rpm = 2;
 document.getElementById("modelInputYRot").addEventListener('input', (event) => {
   y_rot_rpm = event.target.valueAsNumber || 0;
 })
