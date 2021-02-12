@@ -49,15 +49,61 @@ document.getElementById("audioInputFile").onchange = (event) => {
 function AudioProcessor() {
   let audioElement = document.getElementById("audioElement");
   let audioContext = new AudioContext();
-  let audioSrc = audioContext.createMediaElementSource(audioElement);
+  let audioMediaSrc = audioContext.createMediaElementSource(audioElement);
   let audioAnalyzer = audioContext.createAnalyser();
-  audioSrc.connect(audioAnalyzer);
+  audioMediaSrc.connect(audioAnalyzer);
   audioAnalyzer.connect(audioContext.destination);
   audioAnalyzer.fftSize = 2048;
 
   let linearFftArray = new Uint8Array(audioAnalyzer.frequencyBinCount);
   const {createAudioBars, updateAudioBars} = require('audio-frequency-tempered');
   let logFftArray = createAudioBars({ groupLevel: 2 });
+
+  let isRecording = false;
+  let micStreamSrc;
+  function attachMic() {
+    // detach media source
+    audioElement.pause();
+    audioElement.classList.remove('show');
+    audioElement.classList.add('hide');
+    audioMediaSrc.disconnect(audioAnalyzer);
+    audioAnalyzer.disconnect(audioContext.destination);
+    // attach mic
+    navigator.mediaDevices.getUserMedia({audio:true}).then((stream) => {
+      if (isRecording) {
+        micStreamSrc = audioContext.createMediaStreamSource(stream);
+        micStreamSrc.connect(audioAnalyzer);
+      }
+    }, (err) => {
+      console.error(err)
+    })
+  }
+
+  function detachMic() {
+    // detach mic
+    if (micStreamSrc) {
+      micStreamSrc.disconnect(audioAnalyzer);
+      micStreamSrc = null;
+    }
+    // re-attach media source
+    audioElement.classList.remove('hide');
+    audioElement.classList.add('show');
+    audioMediaSrc.connect(audioAnalyzer);
+    audioAnalyzer.connect(audioContext.destination);
+  }
+
+  let micButton = document.getElementById("micButton");
+  micButton.onclick = () => {
+    if (isRecording) {
+      isRecording = false;
+      detachMic();
+      micButton.classList.remove("micIsRecording");
+    } else {
+      isRecording = true;
+      attachMic();
+      micButton.classList.add("micIsRecording");
+    }
+  }
 
   function getLogFftArray() {
     audioAnalyzer.getByteFrequencyData(linearFftArray);
