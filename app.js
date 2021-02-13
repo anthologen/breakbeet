@@ -146,6 +146,12 @@ function FreqRangeSelector() {
   }
   const sliderLogRangeConfig = makeSliderLogRangeConfig();
 
+  const pipConfig = {
+    mode: 'values',
+    values: [20, 200, 2000, 22000],
+    density: 8
+  };
+
   // Solve A and k in y = A*e^(kx) with points (0, 20) and (numFreqBins-1, 22000)
   const binLogA = MIN_FREQUENCY;
   const binLogK = (Math.log(MAX_FREQUENCY/MIN_FREQUENCY)
@@ -161,7 +167,8 @@ function FreqRangeSelector() {
       start: [MIN_FREQUENCY, MID_START_FREQUENCY],
       connect: true,
       tooltips: tooltipConfigList,
-      range: sliderLogRangeConfig
+      range: sliderLogRangeConfig,
+      pips: pipConfig
   });
   hFreqSlider.noUiSlider.on("update", (sliderVals) => {
     hLowerBinIdx = freqToBinIdx(sliderVals[0]);
@@ -177,7 +184,8 @@ function FreqRangeSelector() {
       start: [MID_START_FREQUENCY, MAX_FREQUENCY],
       connect: true,
       tooltips: tooltipConfigList,
-      range: sliderLogRangeConfig
+      range: sliderLogRangeConfig,
+      pips: pipConfig
   });
   vFreqSlider.noUiSlider.on("update", (sliderVals) => {
     vLowerBinIdx = freqToBinIdx(sliderVals[0]);

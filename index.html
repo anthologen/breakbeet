@@ -9,68 +9,95 @@
 		<script type="module" src="node_modules/three/build/three.min.js"></script>
 		<script type="module" src="node_modules/slideout/dist/slideout.min.js"></script>
 		<nav id="menu">
-			<header>
-				<h2>Options</h2>
-				<ul>
-					<li>
-					  <label for="backgroundColor">Background Colour</label>
-				    <input type="color" id="backgroundColor" value="#000000" />
-					</li>
-					<li>
-						<label for="lightColor">Light Colour</label>
-						<input type="color" id="lightColor" value="#404040" />
-					</li>
-					<li>
-						<label for="lightIntensity">Light Intensity</label>
-						<input type="number" id="lightIntensity" min="0" value="8"/>
-					</li>
-					<li>
-						<label for="audioInputFile">Use different audio file</label>
-						<input type="file" id="audioInputFile" accept="audio/*" />
-			    </li>
-					<li>
-						<label for="modelInputFile">Use different GLB/glTF file</label>
-						<input type="file" id="modelInputFile" accept=".glb,.gltf" />
-			    </li>
-					<li>
-						<label for="modelInputXRot">X Rotation RPM</label>
-						<input type="number" id="modelInputXRot" value="0"/>
-					</li>
-					<li>
-						<label for="modelInputYRot">Y Rotation RPM</label>
-						<input type="number" id="modelInputYRot" value="2"/>
-					</li>
-					<li>
-						<label for="modelInputZRot">Z Rotation RPM</label>
-						<input type="number" id="modelInputZRot" value="0"/>
-					</li>
-					<li>
-						<label for="modelHScaleFactor">Horizontal Scaling Factor</label>
-						<input type="number" id="modelHScaleFactor" value="1" step="0.1"/>
-					</li>
-					<li>
-						<label for="modelVScaleFactor">Vertical Scaling Factor</label>
-						<input type="number" id="modelVScaleFactor" value="1" step="0.1"/>
-					</li>
-					<li>
-						<label for="microphoneButton">Use Microphone</label>
-						<button type="button" id="micButton">
-							<img class="iconImg" src="assets/images/mic_icon.svg"></img>
-						</button>
-					</li>
+			<div id="settingsMenu">
+				<h3>Musical Beet Settings</h3>
 					<div>
-						<canvas width="200" height="80" id="audioSpectrumCanvas"></canvas>
-						<label for="sliderHFreqs">Horizontal Frequency Range</label>
-						<div id="sliderHFreqs"></div>
-						<label for="sliderVFreqs">Vertical Frequency Range</label>
-						<div id="sliderVFreqs"></div>
-						<style>
-							.hSliderConnect {background: #C00000}
-						  .vSliderConnect {background: #003FFF}
-						</style>
+						<h4>Animation</h4>
+						<div>
+							<h5>Model Rotation (RPM)</h5>
+							<div class="hEqualSpacing">
+								<div>
+									<label for="modelInputXRot">X</label>
+									<input type="number" id="modelInputXRot" value="0"/>
+								</div>
+								<div>
+									<label for="modelInputYRot">Y</label>
+									<input type="number" id="modelInputYRot" value="2"/>
+								</div>
+								<div>
+									<label for="modelInputZRot">Z</label>
+									<input type="number" id="modelInputZRot" value="0"/>
+								</div>
+							</div>
+						</div>
+						<div>
+							<h5>Scaling Factor (x times)</h5>
+							<div class="hEqualSpacing">
+								<div>
+									<label for="modelHScaleFactor">Horizontal</label>
+									<input type="number" id="modelHScaleFactor" value="1" step="0.1"/>
+								</div>
+								<div>
+									<label for="modelVScaleFactor">Vertical</label>
+									<input type="number" id="modelVScaleFactor" value="1" step="0.1"/>
+								</div>
+							</div>
+						</div>
+						<div>
+							<h5>Frequency Range (Hz)</h5>
+							<div id="frequencySelection">
+								<canvas width="172" height="60" id="audioSpectrumCanvas"></canvas>
+
+									<label for="sliderHFreqs">Horizontal</label>
+									<div class="freqSlider">
+									<div id="sliderHFreqs" ></div>
+								</div>
+								<div class="freqSlider">
+									<label for="sliderVFreqs">Vertical</label>
+									<div id="sliderVFreqs"></div>
+								</div>
+								<style>
+									.hSliderConnect {background: #C00000}
+									.vSliderConnect {background: #003FFF}
+								</style>
+							</div>
+						</div>
 					</div>
-				</ul>
-			</header>
+					<div>
+						<h4>Lighting</h4>
+						<div class="hEqualSpacing">
+							<label for="backgroundColor">Background Colour</label>
+							<input type="color" id="backgroundColor" value="#000000" />
+						</div>
+						<div class="hEqualSpacing">
+							<label for="lightColor">Light Colour</label>
+							<input type="color" id="lightColor" value="#404040" />
+						</div>
+						<div class="hEqualSpacing">
+							<label for="lightIntensity">Light Intensity</label>
+							<input type="number" id="lightIntensity" min="0" value="8"/>
+						</div>
+					</div>
+
+					<div>
+						<h4>Special</h4>
+						<div class="hEqualSpacing">
+							<label for="microphoneButton">Use Microphone</label>
+							<button type="button" id="micButton">
+								<img class="iconImg" src="assets/images/mic_icon.svg" />
+							</button>
+						</div>
+						<div>
+							<label for="audioInputFile">Use Different Audio File</label>
+							<input type="file" id="audioInputFile" accept="audio/*" />
+						</div>
+						<div>
+							<label for="modelInputFile">Use Different GLB/glTF Model</label>
+							<input type="file" id="modelInputFile" accept=".glb,.gltf" />
+						</div>
+					</div>
+				</div>
+			</div>
 		</nav>
 		<main id="panel">
 			<div id="viewport"></div>
