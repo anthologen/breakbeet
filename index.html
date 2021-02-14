@@ -47,13 +47,12 @@
 							<h5>Frequency Range (Hz)</h5>
 							<div id="frequencySelection">
 								<canvas width="172" height="60" id="audioSpectrumCanvas"></canvas>
-
-									<label for="sliderHFreqs">Horizontal</label>
-									<div class="freqSlider">
+								<label for="sliderHFreqs">Horizontal</label>
+								<div class="freqSlider">
 									<div id="sliderHFreqs" ></div>
 								</div>
+								<label for="sliderVFreqs">Vertical</label>
 								<div class="freqSlider">
-									<label for="sliderVFreqs">Vertical</label>
 									<div id="sliderVFreqs"></div>
 								</div>
 								<style>
@@ -94,6 +93,23 @@
 						<div>
 							<label for="modelInputFile">Use Different GLB/glTF Model</label>
 							<input type="file" id="modelInputFile" accept=".glb,.gltf" />
+						</div>
+						<div>
+							<h4>Controls</h4>
+							<div>
+								<div class="hEqualSpacing">
+									<p><b>Play / Pause</b></p> <p>Spacebar</p>
+								</div>
+								<div class="hEqualSpacing">
+									<p><b>Rotate</b></p> <p>Left Mouse Button</p>
+								</div>
+								<div class="hEqualSpacing">
+									<p><b>Zoom</b></p> <p>Scroll Wheel</p>
+								</div>
+								<div class="hEqualSpacing">
+									<p><b>Pan</b></p> <p>Right Mouse Button</p>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

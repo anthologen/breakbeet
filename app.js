@@ -59,6 +59,15 @@ function AudioProcessor() {
   const {createAudioBars, updateAudioBars} = require('audio-frequency-tempered');
   let logFftArray = createAudioBars({ groupLevel: 2 });
 
+  window.addEventListener("keydown", (event) => {
+    switch (event.keyCode) {
+      case 32: // Spacebar
+        event.preventDefault(); // prevent scroll
+        audioElement.paused ? audioElement.play() : audioElement.pause();
+        break;
+    }
+  })
+
   let isRecording = false;
   let micStreamSrc;
   function attachMic() {
