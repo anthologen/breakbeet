@@ -8,6 +8,7 @@
     "nouislider": "^14.6.3",
     "regenerator-runtime": "^0.13.7",
     "slideout": "^1.0.1",
+    "startaudiocontext": "^1.2.1",
     "three": "^0.124.0",
     "wnumb": "^1.2.0"
   },

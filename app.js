@@ -5,6 +5,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import noUiSlider from 'nouislider';
 import 'nouislider/distribute/nouislider.css';
 import wNumb from 'wnumb';
+import StartAudioContext from "startaudiocontext";
 
 var scene = new THREE.Scene();
 scene.background = new THREE.Color(document.getElementById("backgroundColor").value);
@@ -48,7 +49,13 @@ document.getElementById("audioInputFile").onchange = (event) => {
 
 function AudioProcessor() {
   let audioElement = document.getElementById("audioElement");
-  let audioContext = new AudioContext();
+  let AudioContext = window.AudioContext || window.webkitAudioContext || false;
+  if (AudioContext) {
+    var audioContext = new AudioContext();
+  } else {
+    alert("The Web Audio API is not supported by your browser.");
+  }
+  StartAudioContext(audioContext, "#playButton"); //
   let audioMediaSrc = audioContext.createMediaElementSource(audioElement);
   let audioAnalyzer = audioContext.createAnalyser();
   audioMediaSrc.connect(audioAnalyzer);
