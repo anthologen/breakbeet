@@ -55,7 +55,7 @@ function AudioProcessor() {
   } else {
     alert("The Web Audio API is not supported by your browser.");
   }
-  StartAudioContext(audioContext, "#playButton"); //
+  StartAudioContext(audioContext, "#playButton");
   let audioMediaSrc = audioContext.createMediaElementSource(audioElement);
   let audioAnalyzer = audioContext.createAnalyser();
   audioMediaSrc.connect(audioAnalyzer);
@@ -68,8 +68,7 @@ function AudioProcessor() {
 
   window.addEventListener("keydown", (event) => {
     switch (event.keyCode) {
-      case 32: // Spacebar
-        event.preventDefault(); // prevent scroll
+      case 80: // P key
         audioElement.paused ? audioElement.play() : audioElement.pause();
         break;
     }
