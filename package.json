@@ -1,7 +1,7 @@
 {
-  "name": "musical-beets",
+  "name": "breakbeet",
   "version": "0.0.1",
-  "description": "",
+  "description": "A music visualizer that scales a beet according to the music",
   "main": "app.js",
   "dependencies": {
     "audio-frequency-tempered": "^1.0.1",
@@ -12,13 +12,18 @@
     "three": "^0.124.0",
     "wnumb": "^1.2.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "gh-pages": "^3.1.0",
+    "parcel": "^1.12.4"
+  },
   "scripts": {
-    "test": "parcel index.html"
+    "start": "parcel index.html",
+    "predeploy": "rm -rf dist && parcel build index.html --public-url /breakbeet",
+    "deploy": "gh-pages -d dist"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/anthologen/musical-beets.git"
+    "url": "git+https://github.com/anthologen/breakbeet.git"
   },
   "keywords": [
     "3d",
@@ -29,7 +34,7 @@
   "author": "anthologen",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/anthologen/musical-beets/issues"
+    "url": "https://github.com/anthologen/breakbeet/issues"
   },
-  "homepage": "https://github.com/anthologen/musical-beets#readme"
+  "homepage": "https://github.com/anthologen/breakbeet#readme"
 }

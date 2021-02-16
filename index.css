@@ -128,3 +128,7 @@ p {
 .noUi-horizontal .noUi-handle-upper .noUi-tooltip {
   bottom: -130%;
 }
+
+.noUi-value {
+  font-size: 12px;
+}
