@@ -18,9 +18,6 @@ document.getElementById("viewport").appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
-const ambientLight = new THREE.AmbientLight(0x404040, 8);
-scene.add(ambientLight);
-
 window.addEventListener('resize', () => {
   let width = window.innerWidth;
   let height = window.innerHeight;
@@ -33,13 +30,118 @@ document.getElementById("backgroundColor").addEventListener('input', (event) => 
   scene.background = new THREE.Color(event.target.value);
 })
 
-document.getElementById("lightColor").addEventListener('input', (event) => {
-  ambientLight.color = new THREE.Color(event.target.value);
-})
+function LightSelection() {
+  var ambientLight = new THREE.AmbientLight(0x404040, 8);
+  scene.add(ambientLight);
 
-document.getElementById("lightIntensity").addEventListener('input', (event) => {
-  ambientLight.intensity = event.target.valueAsNumber || 0;
-})
+  var pointLight = new THREE.PointLight (0x404040, 8);
+  pointLight.position.set(0, 1, 5);
+  scene.add(pointLight);
+
+  var hemisphereLight = new THREE.HemisphereLight(0x808080, 0x808080, 2);
+  var sunLight = new THREE.DirectionalLight(0x404040, 8);
+  sunLight.position.set(0, 10, 10);
+  sunLight.target.position.set(0, 0, 0);
+  scene.add(hemisphereLight);
+  scene.add(sunLight);
+
+  var lightList = [
+    ambientLight,
+    pointLight,
+    hemisphereLight,
+    sunLight
+  ];
+
+  document.getElementById("lightColor").addEventListener('input', (event) => {
+    let newColor = new THREE.Color(event.target.value);
+    ambientLight.color = newColor;
+    pointLight.color = newColor;
+    sunLight.color = newColor;
+  })
+
+  document.getElementById("lightIntensity").addEventListener('input', (event) => {
+    let newIntensity = event.target.valueAsNumber || 0;
+    ambientLight.intensity = newIntensity;
+    pointLight.intensity = newIntensity;
+    sunLight.intensity = newIntensity;
+  })
+
+  document.getElementById("pointLightXPos").addEventListener('input', (event) => {
+    pointLight.position.x = event.target.valueAsNumber || 0;
+  })
+  document.getElementById("pointLightYPos").addEventListener('input', (event) => {
+    pointLight.position.y = event.target.valueAsNumber || 0;
+  })
+  document.getElementById("pointLightZPos").addEventListener('input', (event) => {
+    pointLight.position.z = event.target.valueAsNumber || 0;
+  })
+
+  document.getElementById("skyColor").addEventListener('input', (event) => {
+    hemisphereLight.color = new THREE.Color(event.target.value);
+  })
+  document.getElementById("groundColor").addEventListener('input', (event) => {
+    hemisphereLight.groundColor = new THREE.Color(event.target.value);
+  })
+  document.getElementById("atmosphereIntensity").addEventListener('input', (event) => {
+    hemisphereLight.intensity = event.target.valueAsNumber || 0;
+  })
+
+  document.getElementById("sunLightXPos").addEventListener('input', (event) => {
+    sunLight.position.x = event.target.valueAsNumber || 0;
+  })
+  document.getElementById("sunLightYPos").addEventListener('input', (event) => {
+    sunLight.position.y = event.target.valueAsNumber || 0;
+  })
+  document.getElementById("sunLightZPos").addEventListener('input', (event) => {
+    sunLight.position.z = event.target.valueAsNumber || 0;
+  })
+
+  document.getElementById("sunLightTargetXPos").addEventListener('input', (event) => {
+    sunLight.target.position.x = event.target.valueAsNumber || 0;
+  })
+  document.getElementById("sunLightTargetYPos").addEventListener('input', (event) => {
+    sunLight.target.position.y = event.target.valueAsNumber || 0;
+  })
+  document.getElementById("sunLightTargetZPos").addEventListener('input', (event) => {
+    sunLight.target.position.z = event.target.valueAsNumber || 0;
+  })
+
+  function chooseLight(lightType) {
+    // Hide all additional options
+    let extraLightSettings = document.querySelectorAll(".lightControl");
+    extraLightSettings.forEach(setting => setting.classList.add("removed"));
+    function showAdditionalSetting(lType) {
+      document.getElementById(`${lType}LightControl`).classList.remove("removed");
+    }
+    lightList.forEach(l => l.visible = false);
+    switch (lightType) {
+      case "ambient":
+        showAdditionalSetting(lightType);
+        ambientLight.visible = true;
+        break;
+      case "point":
+        showAdditionalSetting(lightType);
+        pointLight.visible = true;
+        break;
+      case "outdoor":
+        showAdditionalSetting(lightType);
+        hemisphereLight.visible = true;
+        sunLight.visible = true;
+        break;
+      default:
+        console.error(`Invalid lightType ${lightType}.`);
+    }
+
+  }
+  var lightRadios = document.querySelectorAll('input[type=radio][name=lightType]');
+  lightRadios.forEach(radio => radio.addEventListener('change', () => chooseLight(radio.value)));
+
+  return Object.freeze({
+    chooseLight
+  });
+}
+var lightSelection = LightSelection();
+lightSelection.chooseLight("ambient");
 
 document.getElementById("audioInputFile").onchange = (event) => {
   const uploadedFile = event.target.files[0];

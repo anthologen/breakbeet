@@ -68,6 +68,10 @@ audio {
   transition: opacity 400ms;
 }
 
+.removed {
+  display: none;
+}
+
 .iconImg {
   width: 16px;
   height: 16px;
