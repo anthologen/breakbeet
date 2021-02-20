@@ -40,10 +40,13 @@ function LightSelection() {
 
   var hemisphereLight = new THREE.HemisphereLight(0x808080, 0x808080, 2);
   var sunLight = new THREE.DirectionalLight(0x404040, 8);
+  var sunLightTarget = new THREE.Object3D();
   sunLight.position.set(0, 10, 10);
-  sunLight.target.position.set(0, 0, 0);
+  sunLightTarget.position.set(0, 0, 0);
+  sunLight.target = sunLightTarget;
   scene.add(hemisphereLight);
   scene.add(sunLight);
+  scene.add(sunLightTarget);
 
   var lightList = [
     ambientLight,
@@ -97,13 +100,13 @@ function LightSelection() {
   })
 
   document.getElementById("sunLightTargetXPos").addEventListener('input', (event) => {
-    sunLight.target.position.x = event.target.valueAsNumber || 0;
+    sunLightTarget.position.x = event.target.valueAsNumber || 0;
   })
   document.getElementById("sunLightTargetYPos").addEventListener('input', (event) => {
-    sunLight.target.position.y = event.target.valueAsNumber || 0;
+    sunLightTarget.position.y = event.target.valueAsNumber || 0;
   })
   document.getElementById("sunLightTargetZPos").addEventListener('input', (event) => {
-    sunLight.target.position.z = event.target.valueAsNumber || 0;
+    sunLightTarget.position.z = event.target.valueAsNumber || 0;
   })
 
   function chooseLight(lightType) {
