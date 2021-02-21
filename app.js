@@ -1,15 +1,19 @@
-import 'regenerator-runtime/runtime';
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import "regenerator-runtime/runtime";
+import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import noUiSlider from 'nouislider';
-import 'nouislider/distribute/nouislider.css';
-import wNumb from 'wnumb';
+import noUiSlider from "nouislider";
+import "nouislider/distribute/nouislider.css";
+import wNumb from "wnumb";
 import StartAudioContext from "startaudiocontext";
 
 var scene = new THREE.Scene();
-scene.background = new THREE.Color(document.getElementById("backgroundColor").value);
-var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+scene.background = new THREE.Color(
+  document.getElementById("backgroundColor").value
+);
+var camera = new THREE.PerspectiveCamera(
+  75, window.innerWidth / window.innerHeight, 0.1, 1000
+);
 camera.position.z = 5;
 
 var renderer = new THREE.WebGLRenderer();
@@ -18,31 +22,50 @@ document.getElementById("viewport").appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
-window.addEventListener('resize', () => {
+window.addEventListener("resize", function() {
   let width = window.innerWidth;
   let height = window.innerHeight;
   renderer.setSize(width, height);
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
-})
+});
 
-document.getElementById("backgroundColor").addEventListener('input', (event) => {
+document.getElementById("backgroundColor").addEventListener("input", function(event) {
   scene.background = new THREE.Color(event.target.value);
-})
+});
 
 function LightSelection() {
-  var ambientLight = new THREE.AmbientLight(0x404040, 8);
+  let lightColor = document.getElementById("lightColor").value;
+  let lightIntensity = document.getElementById("lightIntensity").value;
+
+  var ambientLight = new THREE.AmbientLight(lightColor, lightIntensity);
   scene.add(ambientLight);
 
-  var pointLight = new THREE.PointLight (0x404040, 8);
-  pointLight.position.set(0, 1, 5);
+  var pointLight = new THREE.PointLight (lightColor, lightIntensity);
+  pointLight.position.set(
+    document.getElementById("pointLightXPos").value,
+    document.getElementById("pointLightYPos").value,
+    document.getElementById("pointLightZPos").value
+  );
   scene.add(pointLight);
 
-  var hemisphereLight = new THREE.HemisphereLight(0x808080, 0x808080, 2);
-  var sunLight = new THREE.DirectionalLight(0x404040, 8);
+  var hemisphereLight = new THREE.HemisphereLight(
+    document.getElementById("skyColor").value,
+    document.getElementById("groundColor").value,
+    document.getElementById("atmosphereIntensity").value
+  );
+  var sunLight = new THREE.DirectionalLight(lightColor, lightIntensity);
   var sunLightTarget = new THREE.Object3D();
-  sunLight.position.set(0, 10, 10);
-  sunLightTarget.position.set(0, 0, 0);
+  sunLight.position.set(
+    document.getElementById("sunLightXPos").value,
+    document.getElementById("sunLightYPos").value,
+    document.getElementById("sunLightZPos").value
+  );
+  sunLightTarget.position.set(
+    document.getElementById("sunLightTargetXPos").value,
+    document.getElementById("sunLightTargetYPos").value,
+    document.getElementById("sunLightTargetZPos").value
+  );
   sunLight.target = sunLightTarget;
   scene.add(hemisphereLight);
   scene.add(sunLight);
@@ -55,68 +78,68 @@ function LightSelection() {
     sunLight
   ];
 
-  document.getElementById("lightColor").addEventListener('input', (event) => {
+  document.getElementById("lightColor").addEventListener("input", function(event) {
     let newColor = new THREE.Color(event.target.value);
     ambientLight.color = newColor;
     pointLight.color = newColor;
     sunLight.color = newColor;
-  })
+  });
 
-  document.getElementById("lightIntensity").addEventListener('input', (event) => {
+  document.getElementById("lightIntensity").addEventListener("input", function(event) {
     let newIntensity = event.target.valueAsNumber || 0;
     ambientLight.intensity = newIntensity;
     pointLight.intensity = newIntensity;
     sunLight.intensity = newIntensity;
-  })
+  });
 
-  document.getElementById("pointLightXPos").addEventListener('input', (event) => {
+  document.getElementById("pointLightXPos").addEventListener("input", function(event) {
     pointLight.position.x = event.target.valueAsNumber || 0;
-  })
-  document.getElementById("pointLightYPos").addEventListener('input', (event) => {
+  });
+  document.getElementById("pointLightYPos").addEventListener("input", function(event) {
     pointLight.position.y = event.target.valueAsNumber || 0;
-  })
-  document.getElementById("pointLightZPos").addEventListener('input', (event) => {
+  });
+  document.getElementById("pointLightZPos").addEventListener("input", function(event) {
     pointLight.position.z = event.target.valueAsNumber || 0;
-  })
+  });
 
-  document.getElementById("skyColor").addEventListener('input', (event) => {
+  document.getElementById("skyColor").addEventListener("input", function(event) {
     hemisphereLight.color = new THREE.Color(event.target.value);
-  })
-  document.getElementById("groundColor").addEventListener('input', (event) => {
+  });
+  document.getElementById("groundColor").addEventListener("input", function(event) {
     hemisphereLight.groundColor = new THREE.Color(event.target.value);
-  })
-  document.getElementById("atmosphereIntensity").addEventListener('input', (event) => {
+  });
+  document.getElementById("atmosphereIntensity").addEventListener("input", function(event) {
     hemisphereLight.intensity = event.target.valueAsNumber || 0;
-  })
+  });
 
-  document.getElementById("sunLightXPos").addEventListener('input', (event) => {
+  document.getElementById("sunLightXPos").addEventListener("input", function(event) {
     sunLight.position.x = event.target.valueAsNumber || 0;
-  })
-  document.getElementById("sunLightYPos").addEventListener('input', (event) => {
+  });
+  document.getElementById("sunLightYPos").addEventListener("input", function(event) {
     sunLight.position.y = event.target.valueAsNumber || 0;
-  })
-  document.getElementById("sunLightZPos").addEventListener('input', (event) => {
+  });
+  document.getElementById("sunLightZPos").addEventListener("input", function(event) {
     sunLight.position.z = event.target.valueAsNumber || 0;
-  })
+  });
 
-  document.getElementById("sunLightTargetXPos").addEventListener('input', (event) => {
+  document.getElementById("sunLightTargetXPos").addEventListener("input", function(event) {
     sunLightTarget.position.x = event.target.valueAsNumber || 0;
-  })
-  document.getElementById("sunLightTargetYPos").addEventListener('input', (event) => {
+  });
+  document.getElementById("sunLightTargetYPos").addEventListener("input", function(event) {
     sunLightTarget.position.y = event.target.valueAsNumber || 0;
-  })
-  document.getElementById("sunLightTargetZPos").addEventListener('input', (event) => {
+  });
+  document.getElementById("sunLightTargetZPos").addEventListener("input", function(event) {
     sunLightTarget.position.z = event.target.valueAsNumber || 0;
-  })
+  });
 
   function chooseLight(lightType) {
     // Hide all additional options
     let extraLightSettings = document.querySelectorAll(".lightControl");
-    extraLightSettings.forEach(setting => setting.classList.add("removed"));
+    extraLightSettings.forEach((setting) => setting.classList.add("removed"));
     function showAdditionalSetting(lType) {
       document.getElementById(`${lType}LightControl`).classList.remove("removed");
     }
-    lightList.forEach(l => l.visible = false);
+    lightList.forEach(function(l) {l.visible = false;});
     switch (lightType) {
       case "ambient":
         showAdditionalSetting(lightType);
@@ -136,21 +159,22 @@ function LightSelection() {
     }
 
   }
-  var lightRadios = document.querySelectorAll('input[type=radio][name=lightType]');
-  lightRadios.forEach(radio => radio.addEventListener('change', () => chooseLight(radio.value)));
+  var lightRadios = document.querySelectorAll("input[type=radio][name=lightType]");
+  lightRadios.forEach((radio) => radio.addEventListener("change", () => chooseLight(radio.value)));
 
   return Object.freeze({
     chooseLight
   });
 }
-var lightSelection = LightSelection();
+var lightSelection = new LightSelection();
 lightSelection.chooseLight("ambient");
 
-document.getElementById("audioInputFile").onchange = (event) => {
+document.getElementById("audioInputFile").onchange = function(event) {
   const uploadedFile = event.target.files[0];
+  console.debug(uploadedFile);
   const fileUrl = URL.createObjectURL(uploadedFile);
   document.getElementById("audioElement").src = fileUrl;
-}
+};
 
 function AudioProcessor() {
   let audioElement = document.getElementById("audioElement");
@@ -168,36 +192,36 @@ function AudioProcessor() {
   audioAnalyzer.fftSize = 2048;
 
   let linearFftArray = new Uint8Array(audioAnalyzer.frequencyBinCount);
-  const {createAudioBars, updateAudioBars} = require('audio-frequency-tempered');
+  const {createAudioBars, updateAudioBars} = require("audio-frequency-tempered");
   let logFftArray = createAudioBars({ groupLevel: 2 });
 
-  window.addEventListener("keydown", (event) => {
+  window.addEventListener("keydown", function(event) {
     switch (event.keyCode) {
       case 80: // P key
         audioContext.resume();
         audioElement.paused ? audioElement.play() : audioElement.pause();
         break;
     }
-  })
+  });
 
   let isRecording = false;
   let micStreamSrc;
   function attachMic() {
     // detach media source
     audioElement.pause();
-    audioElement.classList.remove('show');
-    audioElement.classList.add('hide');
+    audioElement.classList.remove("show");
+    audioElement.classList.add("hide");
     audioMediaSrc.disconnect(audioAnalyzer);
     audioAnalyzer.disconnect(audioContext.destination);
     // attach mic
-    navigator.mediaDevices.getUserMedia({audio:true}).then((stream) => {
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream) {
       if (isRecording) {
         micStreamSrc = audioContext.createMediaStreamSource(stream);
         micStreamSrc.connect(audioAnalyzer);
       }
-    }, (err) => {
-      console.error(err)
-    })
+    }, function(err) {
+      console.error(err);
+    });
   }
 
   function detachMic() {
@@ -207,14 +231,14 @@ function AudioProcessor() {
       micStreamSrc = null;
     }
     // re-attach media source
-    audioElement.classList.remove('hide');
-    audioElement.classList.add('show');
+    audioElement.classList.remove("hide");
+    audioElement.classList.add("show");
     audioMediaSrc.connect(audioAnalyzer);
     audioAnalyzer.connect(audioContext.destination);
   }
 
   let micButton = document.getElementById("micButton");
-  micButton.onclick = () => {
+  micButton.onclick = function() {
     if (isRecording) {
       isRecording = false;
       detachMic();
@@ -224,12 +248,12 @@ function AudioProcessor() {
       attachMic();
       micButton.classList.add("micIsRecording");
     }
-  }
+  };
 
   function getLogFftArray() {
     audioAnalyzer.getByteFrequencyData(linearFftArray);
     updateAudioBars(linearFftArray); // updates logFftArray
-    return logFftArray.map((x) => x['value']);
+    return logFftArray.map((x) => x["value"]);
   }
 
   function getNumFreqBins() {
@@ -241,13 +265,13 @@ function AudioProcessor() {
     getNumFreqBins
   });
 }
-var audioProcessor = AudioProcessor();
+var audioProcessor = new AudioProcessor();
 
 function FreqRangeSelector() {
   const MIN_FREQUENCY = 20;
   const MAX_FREQUENCY = 22000;
   const MID_START_FREQUENCY = 440;
-  const tooltipConfig = wNumb({suffix: " Hz", thousand: ',', decimals: 0});
+  const tooltipConfig = wNumb({suffix: " Hz", thousand: ",", decimals: 0});
   const tooltipConfigList = [tooltipConfig, tooltipConfig]; // for both handles
 
   function makeSliderLogRangeConfig() {
@@ -257,18 +281,18 @@ function FreqRangeSelector() {
     let logRangeDict = {};
     for (let i = 0; i <= 100; i++)
     {
-      logRangeDict[i + '%'] = centLogA * Math.exp(centLogK * i);
+      logRangeDict[i + "%"] = centLogA * Math.exp(centLogK * i);
     }
     logRangeDict["min"] = MIN_FREQUENCY;
-    delete logRangeDict['0%'];
+    delete logRangeDict["0%"];
     logRangeDict["max"] = MAX_FREQUENCY;
-    delete logRangeDict['100%'];
+    delete logRangeDict["100%"];
     return logRangeDict;
   }
   const sliderLogRangeConfig = makeSliderLogRangeConfig();
 
   const pipConfig = {
-    mode: 'values',
+    mode: "values",
     values: [20, 200, 2000, 22000],
     density: 8
   };
@@ -283,7 +307,7 @@ function FreqRangeSelector() {
 
   let hLowerBinIdx = freqToBinIdx(MIN_FREQUENCY);
   let hUpperBinIdx = freqToBinIdx(MID_START_FREQUENCY);
-  let hFreqSlider = document.getElementById('sliderHFreqs');
+  let hFreqSlider = document.getElementById("sliderHFreqs");
   noUiSlider.create(hFreqSlider, {
       start: [MIN_FREQUENCY, MID_START_FREQUENCY],
       connect: true,
@@ -295,12 +319,12 @@ function FreqRangeSelector() {
     hLowerBinIdx = freqToBinIdx(sliderVals[0]);
     hUpperBinIdx = freqToBinIdx(sliderVals[1]);
   });
-  var hConnects = hFreqSlider.querySelectorAll('.noUi-connect');
+  var hConnects = hFreqSlider.querySelectorAll(".noUi-connect");
   hConnects[0].classList.add("hSliderConnect");
 
   let vLowerBinIdx = freqToBinIdx(MID_START_FREQUENCY);
   let vUpperBinIdx = freqToBinIdx(MAX_FREQUENCY);
-  let vFreqSlider = document.getElementById('sliderVFreqs');
+  let vFreqSlider = document.getElementById("sliderVFreqs");
   noUiSlider.create(vFreqSlider, {
       start: [MID_START_FREQUENCY, MAX_FREQUENCY],
       connect: true,
@@ -312,7 +336,7 @@ function FreqRangeSelector() {
     vLowerBinIdx = freqToBinIdx(sliderVals[0]);
     vUpperBinIdx = freqToBinIdx(sliderVals[1]);
   });
-  var vConnects = vFreqSlider.querySelectorAll('.noUi-connect');
+  var vConnects = vFreqSlider.querySelectorAll(".noUi-connect");
   vConnects[0].classList.add("vSliderConnect");
 
   return Object.freeze({
@@ -323,21 +347,21 @@ function FreqRangeSelector() {
   });
 
 }
-var freqRanges = FreqRangeSelector();
+var freqRanges = new FreqRangeSelector();
 
 function ModelAudioScaler() {
   var hScaleFactor = 1;
-  document.getElementById("modelHScaleFactor").addEventListener('input', (event) => {
+  document.getElementById("modelHScaleFactor").addEventListener("input", function(event) {
     hScaleFactor = event.target.valueAsNumber || 0;
-  })
+  });
 
   var vScaleFactor = 1;
-  document.getElementById("modelVScaleFactor").addEventListener('input', (event) => {
+  document.getElementById("modelVScaleFactor").addEventListener("input", function(event) {
     vScaleFactor = event.target.valueAsNumber || 0;
-  })
+  });
 
   function avg(arr) {
-    if (arr.length === 0) return 0;
+    if (arr.length === 0) { return 0; }
     return arr.reduce((a, b) => a + b) / arr.length;
   }
 
@@ -355,11 +379,11 @@ function ModelAudioScaler() {
     fftArrToScaleVec
   });
 }
-var modelAudioScaler = ModelAudioScaler();
+var modelAudioScaler = new ModelAudioScaler();
 
 function AudioSpectrum() {
   let canvas = document.getElementById("audioSpectrumCanvas");
-  let canvasCtx = canvas.getContext('2d');
+  let canvasCtx = canvas.getContext("2d");
 
   function drawSpectrum(fftArr) {
     canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
@@ -388,28 +412,28 @@ function AudioSpectrum() {
     drawSpectrum
   });
 }
-var audioSpectrum = AudioSpectrum();
+var audioSpectrum = new AudioSpectrum();
 
 var x_rot_rpm = 0;
-document.getElementById("modelInputXRot").addEventListener('input', (event) => {
+document.getElementById("modelInputXRot").addEventListener("input", function(event) {
   x_rot_rpm = event.target.valueAsNumber || 0;
-})
+});
 
 var y_rot_rpm = 2;
-document.getElementById("modelInputYRot").addEventListener('input', (event) => {
+document.getElementById("modelInputYRot").addEventListener("input", function(event) {
   y_rot_rpm = event.target.valueAsNumber || 0;
-})
+});
 
 var z_rot_rpm = 0;
-document.getElementById("modelInputZRot").addEventListener('input', (event) => {
+document.getElementById("modelInputZRot").addEventListener("input", function(event) {
   z_rot_rpm = event.target.valueAsNumber || 0;
-})
+});
 
 function main(inputModelUrl) {
   const loader = new GLTFLoader();
   function loadModel(url) {
     return new Promise((resolve, reject) => {
-      loader.load(url, data => resolve(data), null, reject)
+      loader.load(url, (data) => resolve(data), null, reject);
     });
   }
 
@@ -441,15 +465,16 @@ function main(inputModelUrl) {
     requestAnimationFrame(animate);
   }
 
-  load(inputModelUrl).then(animate).catch(error => {
+  load(inputModelUrl).then(animate).catch(function(error) {
     console.log(error);
   });
 }
 
-document.getElementById("modelInputFile").onchange = (event) => {
+document.getElementById("modelInputFile").onchange = function(event) {
   const uploadedFile = event.target.files[0];
+  console.debug(uploadedFile);
   const fileUrl = URL.createObjectURL(uploadedFile);
   main(fileUrl);
-}
+};
 
-main(require('./assets/models/beetroot.glb'));
+main(require("./assets/models/beetroot.glb"));
