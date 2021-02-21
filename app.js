@@ -1,6 +1,7 @@
 import 'regenerator-runtime/runtime';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import noUiSlider from 'nouislider';
 import 'nouislider/distribute/nouislider.css';
@@ -148,6 +149,7 @@ lightSelection.chooseLight("ambient");
 
 document.getElementById("audioInputFile").onchange = (event) => {
   const uploadedFile = event.target.files[0];
+  console.debug(uploadedFile);
   const fileUrl = URL.createObjectURL(uploadedFile);
   document.getElementById("audioElement").src = fileUrl;
 }
@@ -405,22 +407,45 @@ document.getElementById("modelInputZRot").addEventListener('input', (event) => {
   z_rot_rpm = event.target.valueAsNumber || 0;
 })
 
-function main(inputModelUrl) {
-  const loader = new GLTFLoader();
-  function loadModel(url) {
+function main(inputModelUrl, modelType) {
+
+  function getLoader(modelTypeStr) {
+    switch (modelTypeStr) {
+      case "gtlf":
+      case "glb":
+        return new GLTFLoader();
+        return new Promise((resolve, reject) => {
+          loader.load(url, data => resolve(data), null, reject)
+        });
+        break;
+      case "fbx":
+        return new FBXLoader();
+        break;
+      default:
+        throw new Error(`Unrecognized file format ${fileExt}`);
+    }
+  }
+
+  function loadModel(loader, url) {
     return new Promise((resolve, reject) => {
       loader.load(url, data => resolve(data), null, reject)
     });
   }
 
   var model;
-  async function load(modelUrl) {
+  async function load(modelUrl, modelType) {
     // clear existing model
     let objToRemove = scene.getObjectByName("targetModel");
     scene.remove(objToRemove);
     // load model
-    const gltfData = await loadModel(modelUrl);
-    model = gltfData.scene;
+    let loader = getLoader(modelType);
+    let modelData = await loadModel(loader, modelUrl);
+
+    if (modelType === "gtlf" || modelType === "glb") {
+      model = modelData.scene;
+    } else {
+      model = modelData;
+    }
     model.name = "targetModel";
     scene.add(model);
   }
@@ -441,15 +466,17 @@ function main(inputModelUrl) {
     requestAnimationFrame(animate);
   }
 
-  load(inputModelUrl).then(animate).catch(error => {
+  load(inputModelUrl, modelType).then(animate).catch(error => {
     console.log(error);
   });
 }
 
 document.getElementById("modelInputFile").onchange = (event) => {
   const uploadedFile = event.target.files[0];
+  console.debug(uploadedFile);
+  let fileExt = uploadedFile.name.split('.').pop();
   const fileUrl = URL.createObjectURL(uploadedFile);
-  main(fileUrl);
+  main(fileUrl, fileExt);
 }
 
-main(require('./assets/models/beetroot.glb'));
+main(require('./assets/models/beetroot.glb'), 'glb');
