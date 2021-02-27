@@ -12,13 +12,21 @@ The default scene is a low poly beetroot animated to a short drum pattern, but y
 
 ![Example GIF](assets/images/make_donuts.gif)
 
-This demonstrates that you can make a really simple animation controlled by your voice.
+This shows that you can make a really simple animation controlled by your voice.
 
 From the settings panel, you can select a different audio file to use. If your desired audio is streamed, you can install a Virtual Audio Device (for [example](https://www.dxzone.com/5-free-virtual-audio-cable-software/), I use [Blackhole](https://github.com/ExistentialAudio/BlackHole)) to loopback system audio to your microphone.
 
 You can also select a different 3D model to use from the settings panel. This project currently only accepts GLB / gLTF models so all other file formats should be converted to gLTF in order to be used. If you aren't exporting from a modelling tool, there are several free online converters (such as the [BlackThread.io gLTF converter](https://blackthread.io/gltf-converter/)).
 
 The controls are purposely hidden and a background color selector is provided to make the background easy to chroma key out.
+
+For more examples, check out some of the clips I put on [YouTube](https://www.youtube.com/playlist?list=PLs_0Nv-YQkoCrw4O8oCQoY7Eow-vmqNQB):
+
+[![Breakbeet Demo Clip 1](https://img.youtube.com/vi/J0i9favfihk/default.jpg)](https://www.youtube.com/watch?v=J0i9favfihk)
+[![Breakbeet Demo Clip 2](https://img.youtube.com/vi/OkYdRwLPN5c/default.jpg)](https://www.youtube.com/watch?v=OkYdRwLPN5c)
+[![Breakbeet Demo Clip 3](https://img.youtube.com/vi/GtzHPPxHaA0/default.jpg)](https://www.youtube.com/watch?v=GtzHPPxHaA0)
+[![Breakbeet Demo Clip 4](https://img.youtube.com/vi/_EYnsCz9cGE/default.jpg)](https://www.youtube.com/watch?v=_EYnsCz9cGE)
+[![Breakbeet Demo Clip 5](https://img.youtube.com/vi/AWZaCTdAbmM/default.jpg)](https://www.youtube.com/watch?v=AWZaCTdAbmM)
 
 ## Technology
 All processing is done locally in the browser using the [Web Audio API](https://www.w3.org/TR/webaudio) and [three.js](https://threejs.org). None of the user provided models or audio is uploaded anywhere. This project is hosted on [GitHub Pages](https://pages.github.com).
